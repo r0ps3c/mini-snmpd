@@ -61,6 +61,9 @@ int read_config(char *file)
 		CFG_INT ("timeout", g_timeout, CFGF_NONE),
 		CFG_STR ("vendor", VENDOR, CFGF_NONE),
 		CFG_STR_LIST("disk-table", "/", CFGF_NONE),
+#ifndef __FreeBSD__
+		CFG_STR_LIST("path-to-netdev", "/proc/net", CFGF_NONE),
+#endif
 		CFG_STR_LIST("iface-table", NULL, CFGF_NONE),
 		CFG_END()
 	};
@@ -98,6 +101,9 @@ int read_config(char *file)
 	g_disk_list_length = get_list(cfg, "disk-table", g_disk_list, NELEMS(g_disk_list));
 	g_interface_list_length = get_list(cfg, "iface-table", g_interface_list, NELEMS(g_interface_list));
 
+#ifndef __FreeBSD__
+	g_path_to_netdev   = get_string(cfg, "path-to-netdev");
+#endif
 	g_auth        = cfg_getbool(cfg, "authentication");
 	g_community   = get_string(cfg, "community");
 	g_timeout     = cfg_getint(cfg, "timeout");

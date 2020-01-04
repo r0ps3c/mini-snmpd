@@ -269,6 +269,10 @@ extern char     *g_location;
 extern char     *g_contact;
 extern char     *g_bind_to_device;
 
+#ifndef __FreeBSD__
+extern char		*g_path_to_netdev;
+#endif
+
 extern char     *g_disk_list[MAX_NR_DISKS];
 extern size_t    g_disk_list_length;
 

@@ -55,6 +55,7 @@ static void print_help(void)
 	       "  -C, --contact STR      System contact, default: none\n"
 	       "  -d, --disks PATH       Disks to monitor, default: /\n"
 	       "  -i, --interfaces IFACE Network interfaces to monitor, default: none\n"
+	       "  -r, --netdevpath       Path to net dev interface stats file (i.e. if not under /proc/net)\n"
 	       "  -I, --listen IFACE     Network interface to listen, default: all\n"
 	       "  -t, --timeout SEC      Timeout for MIB updates, default: 1 second\n"
 	       "  -a, --auth             Enable authentication, i.e. SNMP version 2c\n"
@@ -286,7 +287,7 @@ static void handle_tcp_client_read(client_t *client)
 
 int main(int argc, char *argv[])
 {
-	static const char short_options[] = "p:P:c:D:V:L:C:d:i:t:ansvh"
+	static const char short_options[] = "p:P:c:D:V:L:C:d:i:t:r:ansvh"
 #ifndef __FreeBSD__
 		"I:"
 #endif
@@ -316,6 +317,7 @@ int main(int argc, char *argv[])
 		{ "interfaces", 1, 0, 'i' },
 #ifndef __FreeBSD__
 		{ "listen", 1, 0, 'I' },
+		{ "netdevpath", 1, 0, 'r' },
 #endif
 		{ "timeout", 1, 0, 't' },
 		{ "auth", 0, 0, 'a' },
@@ -405,6 +407,9 @@ int main(int argc, char *argv[])
 			case 'I':
 				g_bind_to_device = strdup(optarg);
 				break;
+			case 'r':
+				g_path_to_netdev = strncat(strdup(optarg),"/dev",PATH_MAX-1);
+				break;
 #endif
 			case 'd':
 				g_disk_list_length = split(optarg, ",:;", g_disk_list, MAX_NR_DISKS);
@@ -473,6 +478,10 @@ int main(int argc, char *argv[])
 	if (!g_contact)
 		g_contact = strdup("");
 
+#ifndef __FreeBSD__
+	if (!g_path_to_netdev)
+		g_path_to_netdev = strdup("/proc/net/dev");
+#endif
 	/* Store the starting time since we need it for MIB updates */
 	if (gettimeofday(&tv_last, NULL) == -1) {
 		memset(&tv_last, 0, sizeof(tv_last));

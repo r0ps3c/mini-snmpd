@@ -174,7 +174,7 @@ void get_netinfo(netinfo_t *netinfo)
 	if (fd != -1)
 		close(fd);
 
-	if (parse_file("/proc/net/dev", fields))
+	if (parse_file(g_path_to_netdev,fields))
 		memset(netinfo, 0, sizeof(*netinfo));
 }
 
