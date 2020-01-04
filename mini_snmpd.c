@@ -287,9 +287,10 @@ static void handle_tcp_client_read(client_t *client)
 
 int main(int argc, char *argv[])
 {
-	static const char short_options[] = "p:P:c:D:V:L:C:d:i:t:r:ansvh"
+	static const char short_options[] = "p:P:c:D:V:L:C:d:i:t:ansvh"
 #ifndef __FreeBSD__
 		"I:"
+		"r:"
 #endif
 #ifdef CONFIG_ENABLE_IPV6
 		"46"
